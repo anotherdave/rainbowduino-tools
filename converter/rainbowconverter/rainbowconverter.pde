@@ -42,16 +42,17 @@ void draw() {
 }
 
 void mousePressed() {
-  String outputFilename = changeExtension(inputFilename, ".c");
+  String outputFilename = changeExtension(inputFilename, ".h");
   println("Saving...");
   OutputStream os = createOutput(outputFilename);
   PrintWriter wr = new PrintWriter(os);
   try {
+    wr.println("#ifndef ANIMDATA\n#define ANIMDATA");
     wr.println("// generated from " + inputFilename);
     // generate constant for number of frames
-    wr.println("unsigned char Prefab_frames = " + animation.length + ";");
+    wr.println("#define PREFAB_FRAMES " + animation.length);
     // generate the declaration with the right number of frames
-    wr.println("unsigned char Prefabnicatel[" + animation.length + "][3][8][4] PROGMEM =\n{");
+    wr.println("unsigned char Prefabnicatel[PREFAB_FRAMES][3][8][4] PROGMEM =\n{");
       for (int i=0; i<animation.length; i++) {
         wr.println("{\n// frame " + (i+1));
         PImage frame = animation[i];
@@ -59,6 +60,7 @@ void mousePressed() {
         wr.println("}, // end frame " + (i+1));
       }
    wr.println("};");
+   wr.println("#endif");
   println("Saved to " + outputFilename);   
   }
   finally {
